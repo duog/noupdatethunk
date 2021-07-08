@@ -1,4 +1,10 @@
 {
+    "headhackage": {
+        "ref": "pr/draft-new-nix-overlay",
+        "repo": "https://gitlab.haskell.org/duog/head.hackage",
+        "rev": "f6d8d0cda14aafe830830f5733180d58bccb1861",
+        "type": "git"
+    },
     "niv": {
         "branch": "master",
         "description": "Easy dependency management for Nix projects",
@@ -17,10 +23,10 @@
         "homepage": "",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "09c38c29f2c719cd76ca17a596c2fdac9e186ceb",
-        "sha256": "0i6kcs0zxwfaflcg6wfkwcinfnilkxlb6ad29v01bkhg6asl6ihf",
+        "rev": "00c86ad14639887ec495b92ada9cd93a75317686",
+        "sha256": "1pv90ljzxn0v9nflpcdiskfwk5752a9kfinajakly4jzwsg7pa1s",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/09c38c29f2c719cd76ca17a596c2fdac9e186ceb.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/00c86ad14639887ec495b92ada9cd93a75317686.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
