@@ -1,10 +1,10 @@
-{-# LANGUAGE Rank2Types, ExistentialQuantification, RecordWildCards #-}
+{-# LANGUAGE Rank2Types, ExistentialQuantification, RecordWildCards, NamedFieldPuns #-}
 
 -- compile me with 
 -- > ghc -with-rtsopts=-T -O
 
 import Data.Word
-import Data.List
+import qualified Data.List as DL
 --import Data.List.Split
 import Data.Bits
 import Data.Function
@@ -67,7 +67,7 @@ csolve t = fst (unCTree t csolve')
             then value n
             else maximum (map (($ d-1) . snd) rc))
     where
-    pickedChild = fst (maximumBy (comparing (($ depth) . snd)) rc)
+    pickedChild = fst (DL.maximumBy (comparing (($ depth) . snd)) rc)
 
 
 -- UTree stuff
@@ -82,7 +82,7 @@ usolve t = usolve' (t ())
   usolve' (UNode n ts) = n : usolve pickedChild
     where
     ratedChilds = [ (t, urate depth t) | t <- ts ]
-    pickedChild = fst (maximumBy (comparing snd) ratedChilds)
+    pickedChild = fst (DL.maximumBy (comparing snd) ratedChilds)
 
 urate :: Int -> UTree -> Int
 urate 0 t = case t () of (UNode n _)  -> value n
@@ -101,24 +101,24 @@ solve :: Tree -> [S]
 solve (Node n ts) = n : solve pickedChild
   where
   ratedChilds = [ (t, rate depth t) | t <- ts ]
-  pickedChild = fst (maximumBy (comparing snd) ratedChilds)
+  pickedChild = fst (DL.maximumBy (comparing snd) ratedChilds)
 
 rate 0 (Node n _) = value n
 rate d (Node _ ts) = maximum (map (rate (d-1)) ts)
 
 solveDup t = case dup t of Box t -> solve t
 
-solveDeepDup t = case deepDup t of Box t -> solve t
+-- solveDeepDup t = case deepDup t of Box t -> solve t
 
 solveRateDup (Node n ts) = n :
-    solveRateDup (fst (maximumBy (comparing snd) [ (t, rateDup depth t) | t <- ts ]))
+    solveRateDup (fst (DL.maximumBy (comparing snd) [ (t, rateDup depth t) | t <- ts ]))
 
 solveRateRecDup (Node n ts) = n :
-    solveRateRecDup (fst (maximumBy (comparing snd) [ (t, rateRecDup depth t) | t <- ts ]))
+    solveRateRecDup (fst (DL.maximumBy (comparing snd) [ (t, rateRecDup depth t) | t <- ts ]))
 
-solveDeepDupRateDup t = case deepDup t of Box t -> go t
-    where go (Node n ts) = n :
-            go (fst (maximumBy (comparing snd) [ (t, rateDup depth t) | t <- ts ]))
+-- solveDeepDupRateDup t = case deepDup t of Box t -> go t
+--     where go (Node n ts) = n :
+--             go (fst (DL.maximumBy (comparing snd) [ (t, rateDup depth t) | t <- ts ]))
 
 rateDup d t = case dup t of Box t2 -> rate d t2
 {-# NOINLINE rateDup #-}
@@ -159,18 +159,18 @@ regularSolverSlow s = Run
     (\t -> return $! solve t !! 10000)
 
 data RunDesc = Original 
-	| SolveDup 
-	| RateDup 
-	| RateRecDup 
-	| SolveDeepDup 
-	| SolveDeepDupRateDup
-	| Unit 
-	| Church
+    | SolveDup
+    | RateDup
+    | RateRecDup
+    -- | SolveDeepDup
+    -- | SolveDeepDupRateDup
+    | Unit
+    | Church
     deriving (Show, Read, Eq)
 
 runDescDesc Original = "original"
 runDescDesc SolveDup = "\\textsf{solveDup}"
-runDescDesc SolveDeepDup = "\\textsf{solveDeepDup}"
+-- runDescDesc SolveDeepDup = "\\textsf{solveDeepDup}"
 runDescDesc RateDup = "\\textsf{rateDup}"
 runDescDesc RateRecDup = "\\textsf{rateRecDup}"
 runDescDesc Unit = "unit lifting"
@@ -183,7 +183,7 @@ runs = [
     ((False,SolveDup), regularSolver solveDup),
     ((False,RateDup), regularSolver solveRateDup),
 --    ((False,RateRecDup), regularSolver solveRateRecDup),
-    ((False,SolveDeepDup), regularSolver solveDeepDup),
+    -- ((False,SolveDeepDup), regularSolver solveDeepDup),
 --    ((False,SolveDeepDupRateDup), regularSolver solveDeepDupRateDup),
     ((False,Unit), Run
         utree
@@ -203,7 +203,7 @@ runs = [
     ((True,SolveDup), regularSolverSlow solveDup),
     ((True,RateDup), regularSolverSlow solveRateDup),
 --    ((True,RateRecDup), regularSolver solveRateRecDup),
-    ((True,SolveDeepDup), regularSolverSlow solveDeepDup),
+    -- ((True,SolveDeepDup), regularSolverSlow solveDeepDup),
     ((True,Unit), Run
         utreeSlow
         (\t -> return $! usolve t !! 10000)
@@ -253,7 +253,8 @@ mainStats slow = do
             if (variant, snd run) `elem` skipped
             then putStr "&\n&\n"
             else do
-            out <- readProcess "./PaperStats" [show run, show variant] ""
+            this <- getExecutablePath
+            out <- readProcess this [show run, show variant] ""
             let (_, _, alloc, time) = read out :: (String, Variant, Integer, Double)
             -- print (run, variant, alloc, time)
             printf "&\n {\\def\\@currentlabel{%s}\\label{stats:%s%s:%s:mem}%s}" (showLargeNum alloc) slowT (show (snd run)) (show variant) (showLargeNum alloc)
@@ -263,7 +264,7 @@ mainStats slow = do
     printf "\\end{tabular}\n"
     printf "\\makeatother\n"
 
-showLargeNum = intercalate "\\," . map reverse . reverse . splitEvery 3 . reverse . show 
+showLargeNum = DL.intercalate "\\," . map reverse . reverse . splitEvery 3 . reverse . show
 
 splitEvery _ [] = []
 splitEvery n l = take n l : splitEvery n (drop n l)
@@ -310,8 +311,8 @@ mainRun n variant k = do
                     performGC
                     gDosomethingwith t
     performGC
-    stats <- getGCStats
-    print (show n, variant, peakMegabytesAllocated stats, cpuSeconds stats)
+    RTSStats{max_live_bytes, cpu_ns} <- getRTSStats
+    print (show n, variant, max_live_bytes `div` 2 ^ 20, (fromInteger . toInteger $ cpu_ns :: Double) /  (2 ** 30))
 
 main = do
     args <- getArgs

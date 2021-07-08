@@ -1,5 +1,5 @@
 import Data.Word
-import Data.List
+import qualified Data.List as DL
 import Data.Bits
 import Data.Function
 import System.Environment
@@ -19,13 +19,13 @@ depth = 4
 
 solveDup t = case dup t of Box t -> solve t
 
-solveDeepDup t = case deepDup t of Box t -> solve t
+-- solveDeepDup t = case deepDup t of Box t -> solve t
 
 solve' (Node n ts) = n :
-    solve' (fst (maximumBy (compare `on` snd) [ (t, rate' depth t) | t <- ts ]))
+    solve' (fst (DL.maximumBy (compare `on` snd) [ (t, rate' depth t) | t <- ts ]))
 
 solve (Node n ts) = n :
-    solve (fst (maximumBy (compare `on` snd) [ (t, rate depth t) | t <- ts ]))
+    solve (fst (DL.maximumBy (compare `on` snd) [ (t, rate depth t) | t <- ts ]))
 
 --rate d t = rate' d t
 rate' d t = case dup t of Box t2 -> rate d t2
@@ -39,8 +39,8 @@ ht xs = last xs + head xs
 ht' :: [Word32] -> Word32
 ht' xs = case dup xs of Box xs' -> last xs' + head xs
 
-ht'' :: [Word32] -> Word32
-ht'' xs = case deepDup xs of Box xs' -> last xs' + head xs
+-- ht'' :: [Word32] -> Word32
+-- ht'' xs = case deepDup xs of Box xs' -> last xs' + head xs
 
 main = do
     [n] <- getArgs 
@@ -60,10 +60,7 @@ main = do
     --t `seq` return ()
     --print $ rate 1 t
 
-    print $ solve t !! 10000
-    print $ solve t !! 10000
+    print $ solveDup t !! 10000
+    print $ solveDup t !! 10000
     hFlush stdout
-    print $ solve t !! 1
-    
-
-
+    print $ solveDup t !! 1

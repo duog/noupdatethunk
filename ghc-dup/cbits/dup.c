@@ -9,11 +9,11 @@ StgWord dupClosureSize(StgClosure *closure) {
     return closure_sizeW(closure);
 }
 
-StgWord dupHeapAlloced (StgClosure *closure) {
-    ASSERT(LOOKS_LIKE_CLOSURE_PTR(closure));
-    //return HEAP_ALLOCED(closure); does not work in GHCI
-    return !closure_STATIC(closure);
-}
+/* StgWord dupHeapAlloced (StgClosure *closure) { */
+/*     ASSERT(LOOKS_LIKE_CLOSURE_PTR(closure)); */
+/*     //return HEAP_ALLOCED(closure); does not work in GHCI */
+/*     return !closure_STATIC(closure); */
+/* } */
 
 void dupStaticWarning(StgClosure *closure) {
     fprintf(stderr,"Static closure passed to dup!\n");
@@ -22,9 +22,9 @@ void dupStaticWarning(StgClosure *closure) {
 }
 
 void dupUnsupportedWarning(StgClosure *closure) {
-    fprintf(stderr,"Closure of nun-dupable type %d passed to dup!\n", get_itbl(closure)->type);
+    IF_DEBUG(sanity, fprintf(stderr,"Closure of non-dupable type %d passed to dup!\n", get_itbl(closure)->type));
 }
 
-void dupDebugPtr(StgWord word) {
-    fprintf(stderr,"dupDebugPtr %p\n", word);
-}
+/* void dupDebugPtr(StgWord word) { */
+/*     fprintf(stderr,"dupDebugPtr %p\n", word); */
+/* } */
