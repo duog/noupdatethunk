@@ -1,0 +1,4 @@
+*.hp
+*.svg
+cabal.project
+dist-newstyle
