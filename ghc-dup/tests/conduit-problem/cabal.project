@@ -1,0 +1,7 @@
+packages: .
+
+source-repository-package
+  type: git
+  location: https://gitlab.haskell.org/ghc/ghc-debug.git
+  tag: 5648030cde0ebd15e4235623ea7df6addcb04dad
+  subdir: stub ghc-debug-brick client common

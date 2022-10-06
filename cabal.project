@@ -1,2 +1,2 @@
 packages: .
-          ./ghc-dup
+          ghc-dup

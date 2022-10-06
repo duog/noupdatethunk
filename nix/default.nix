@@ -5,8 +5,8 @@ with builtins;
 , system ? currentSystem
 }: let
   # Note this is my branch
-  head-hackage-overlay = import sources.headhackage {};
+#   head-hackage-overlay = import sources.headhackage {};
 in import sources.nixpkgs {
-  inherit config system;
-  overlays = overlays ++ [head-hackage-overlay];
+  inherit config system overlays;
+  # overlays = overlays ++ [head-hackage-overlay];
 }

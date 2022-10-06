@@ -1,5 +1,5 @@
 { pkgs ? import ./nix {}
-, compilerVersion ? "ghcHEAD"
+, compilerVersion ? "ghc924"
 , doCheck ? false
 , lib ? pkgs.lib
 , this ? "noupdatethunk"
@@ -18,7 +18,7 @@ let
             shell = hsuper.shellFor {
               packages = p: [ p.${this} ];
               buildInputs = [
-              #   hself.haskell-language-server
+                hself.haskell-language-server
                 pkgs.haskellPackages.cabal-install
               ];
             };

@@ -1,0 +1,44 @@
+cabal-version:      3.0
+name:               the-conduit-problem
+version:            0.1.0.0
+synopsis:           Demonstration of the conduit memory leak problem
+license:            BSD-3-Clause
+license-file:       LICENSE
+author:             Edsko de Vries
+maintainer:         edsko@well-typed.com
+category:           Development
+build-type:         Simple
+
+common lang
+  ghc-options:
+      -Wall
+  build-depends:
+      base >= 4.16
+  default-language:
+      GHC2021
+
+executable the-conduit-problem
+  import:
+      lang
+  main-is:
+      Main.hs
+  hs-source-dirs:
+      app
+  build-depends:
+      ghc-debug-stub
+  ghc-options:
+      -finfo-table-map
+      -fdistinct-constructor-tables
+      -threaded
+      -eventlog
+      -rtsopts
+
+executable debugger
+  import:
+      lang
+  main-is:
+      Main.hs
+  hs-source-dirs:
+      debugger
+  build-depends:
+      ghc-debug-client
